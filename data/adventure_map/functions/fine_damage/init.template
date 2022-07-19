@@ -1,0 +1,84 @@
+me Setting up fine_hp...
+scoreboard objectives add ##health_stat## health
+
+scoreboard objectives add ##damage_tick## dummy
+
+scoreboard objectives add ##has_died## deathCount
+
+scoreboard objectives add ##hunger## food
+
+scoreboard objectives add ##health## dummy "Health"
+scoreboard objectives setdisplay list ##health##
+scoreboard objectives setdisplay belowname ##health##
+
+scoreboard objectives remove ##player_world_damage## 
+scoreboard objectives add ##player_world_damage## minecraft.custom:minecraft.damage_resisted
+
+scoreboard objectives add ##last_health## dummy
+
+scoreboard objectives add ##skeleton_last_base_hp## dummy
+
+scoreboard objectives add ##max_health## dummy
+scoreboard objectives add ##max_health_base## dummy
+
+scoreboard objectives add ##invulnerable_ticks## dummy
+
+scoreboard objectives remove ##physical_damage##
+scoreboard objectives add ##physical_damage## dummy
+
+scoreboard objectives remove ##magic_damage##
+scoreboard objectives add ##magic_damage## dummy
+
+scoreboard objectives remove ##physical_resist##
+scoreboard objectives add ##physical_resist## dummy
+
+scoreboard objectives remove ##magic_resist##
+scoreboard objectives add ##magic_resist## dummy
+
+scoreboard objectives add ##physical_resist_base## dummy
+
+scoreboard objectives add ##magic_resist_base## dummy
+
+scoreboard objectives remove ##regen_tick##
+scoreboard objectives add ##regen_tick## dummy
+
+scoreboard objectives remove ##fast_regen_ticks##
+scoreboard objectives add ##fast_regen_ticks## dummy
+
+scoreboard objectives remove ##regen_amount##
+scoreboard objectives add ##regen_amount## dummy
+
+scoreboard objectives add ##regen_amount_base## dummy
+
+scoreboard objectives add ##regen_frequency## dummy
+
+scoreboard objectives remove ##hp_check_tick##
+scoreboard objectives add ##hp_check_tick## dummy
+
+scoreboard objectives remove ##health_fraction##
+scoreboard objectives add ##health_fraction## dummy
+
+scoreboard objectives remove ##name_reset_ticks##
+scoreboard objectives add ##name_reset_ticks## dummy
+
+scoreboard objectives remove ##entity_linker##
+scoreboard objectives add ##entity_linker## dummy
+scoreboard players set ##globals## ##entity_linker## 0
+
+scoreboard objectives remove ##t0##
+scoreboard objectives add ##t0## dummy
+
+scoreboard objectives remove ##t1##
+scoreboard objectives add ##t1## dummy
+
+scoreboard objectives remove ##t2##
+scoreboard objectives add ##t2## dummy
+
+scoreboard objectives remove ##t3##
+scoreboard objectives add ##t3## dummy
+
+scoreboard objectives remove ##t4##
+scoreboard objectives add ##t4## dummy
+
+scoreboard objectives remove ##t5##
+scoreboard objectives add ##t5## dummy

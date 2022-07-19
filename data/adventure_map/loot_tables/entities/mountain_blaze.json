@@ -1,0 +1,48 @@
+{	
+    "pools": [
+        {
+            "rolls": 1,
+            "entries": [
+
+                {
+                    "type": "item",
+                    "name": "minecraft:sunflower",
+					"functions": [
+						{
+							"function": "minecraft:set_nbt",
+							"tag": "{display:{Name:'{\"italic\":false,\"text\":\"Gold Coin\"}'}}"
+						},
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0,
+								"max": 2
+							}
+						}
+					]
+                },
+                {
+                    "type": "item",
+                    "name": "minecraft:blaze_powder",
+					"functions": [
+						{
+							"function": "minecraft:set_nbt",
+							"tag": "{display:{Name:'{\"italic\":false,\"text\":\"Mountain Blaze Powder\"}',
+                                        Lore:['{\"text\":\"Junk Item\"']}}"
+						},
+						{
+							"function": "minecraft:set_count",
+							"count": {
+								"min": 0,
+								"max": 1
+							}
+						}
+					]
+                }
+            ]
+
+        }
+
+    ]
+
+}

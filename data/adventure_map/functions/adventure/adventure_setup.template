@@ -1,0 +1,70 @@
+team add ##enemies## "Enemies"
+team modify ##enemies## color red
+team modify ##enemies## friendlyFire false
+team modify ##enemies## collisionRule pushOtherTeams
+
+team add ##friendlies## "Friendlies"
+team modify ##friendlies## color green
+team modify ##friendlies## seeFriendlyInvisibles true
+team modify ##friendlies## friendlyFire false
+team modify ##friendlies## collisionRule never
+
+scoreboard objectives add ##current_region## dummy
+scoreboard objectives add ##persistence## dummy
+
+scoreboard objectives add replenish_ok dummy
+
+scoreboard objectives add ##mage_fireball_power## dummy
+scoreboard objectives add ##mage_windspear_power## dummy
+scoreboard objectives add ##mage_discharge_power## dummy
+scoreboard objectives add ##mage_attack_splash_power## dummy
+scoreboard objectives add ##mage_zephyr_power## dummy
+scoreboard objectives add ##mage_repulse_power## dummy
+
+scoreboard objectives add ##archer_piercingArrow_power## dummy
+
+scoreboard objectives add ##knight_depthsCurse_power## dummy
+scoreboard objectives add ##knight_mobHook_power## dummy
+
+scoreboard objectives add ##knight_groundPound_power## dummy
+scoreboard objectives add ##knight_groundPound_riseTime## dummy
+
+scoreboard objectives add ##knight_shield_power## dummy
+scoreboard objectives add ##knight_shield_uses## dummy
+scoreboard objectives add ##knight_shield_time## dummy
+
+scoreboard objectives add ##blaze_magic_damage## dummy
+scoreboard objectives add ##blaze_physical_damage## dummy
+
+scoreboard objectives add ##ranged_tick## dummy
+scoreboard objectives add ##ranged_freq## dummy
+scoreboard objectives add ##ranged_physical## dummy
+scoreboard objectives add ##ranged_magic## dummy
+
+scoreboard objectives add ##charge_tick## dummy
+scoreboard objectives add ##charge_freq## dummy
+scoreboard objectives add ##charge_physical## dummy
+scoreboard objectives add ##charge_magic## dummy
+scoreboard objectives add ##charge_vx## dummy
+scoreboard objectives add ##charge_vz## dummy
+
+scoreboard objectives add blink minecraft.used:minecraft.carrot_on_a_stick
+scoreboard objectives add _blink trigger
+
+scoreboard objectives add use.stone_hoe minecraft.used:minecraft.stone_hoe
+scoreboard objectives add use.golden_hoe minecraft.used:minecraft.golden_hoe
+scoreboard objectives add use.iron_hoe minecraft.used:minecraft.iron_hoe
+scoreboard objectives add use.diam_hoe minecraft.used:minecraft.diamond_hoe
+
+scoreboard objectives add use.stone_sword minecraft.used:minecraft.stone_sword
+scoreboard objectives add use.golden_sword minecraft.used:minecraft.golden_sword
+scoreboard objectives add use.iron_sword minecraft.used:minecraft.iron_sword
+scoreboard objectives add use.diam_sword minecraft.used:minecraft.diamond_sword
+
+scoreboard objectives add ##knight_shield_used## minecraft.custom:minecraft.damage_blocked_by_shield
+
+gamerule mobGriefing false
+gamerule doMobSpawning false
+gamerule doWeatherCycle false
+gamerule doLimitedCrafting true
+gamerule keepInventory true

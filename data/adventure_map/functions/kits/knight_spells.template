@@ -1,0 +1,242 @@
+# Splash melee
+tag @a[tag=knight,scores={use.stone_sword=1,##melee_mp_cooldown##=0}] add knight_mana_steal
+tag @a[tag=knight,scores={use.golden_sword=1,##melee_mp_cooldown##=0}] add knight_mana_steal
+tag @a[tag=knight,scores={use.iron_sword=1,##melee_mp_cooldown##=0}] add knight_mana_steal
+tag @a[tag=knight,scores={use.diam_sword=1,##melee_mp_cooldown##=0}] add knight_mana_steal
+execute as @a[tag=knight_mana_steal] run scoreboard players operation @s ##mp## += @s ##melee_mp##
+execute as @a[tag=knight_mana_steal] run scoreboard players set @s ##melee_mp_cooldown## ##melee_mp_cooldown_ticks##
+scoreboard players set @a use.stone_sword 0
+scoreboard players set @a use.golden_sword 0
+scoreboard players set @a use.iron_sword 0
+scoreboard players set @a use.diam_sword 0
+tag @a remove knight_mana_steal
+
+# Class restriction
+effect give @a[tag=!knight,nbt={SelectedItem:{tag:{display:{Lore:[##knight_melee##]}}}}] slowness 3 9
+effect give @a[tag=!knight,nbt={SelectedItem:{tag:{display:{Lore:[##knight_melee##]}}}}] weakness 3 9
+tag @a[tag=knight,nbt={SelectedItem:{tag:{display:{Lore:[##knight_melee##]}}}}] add holdingWeapon
+tag @a[tag=knight,nbt={SelectedItemSlot:0}] remove holdingWeapon
+effect give @a[tag=knight,tag=holdingWeapon] slowness 3 9
+effect give @a[tag=knight,tag=holdingWeapon] weakness 3 9
+tag @a[tag=knight] remove holdingWeapon
+
+# Replenish items
+tag @e[type=minecraft:item,nbt={Item:{tag:{display:{Lore:[##knight_melee##]}}}},tag=!processed] add replenish_0
+tag @e[type=minecraft:item,nbt={Item:{tag:{display:{Lore:[##knight_spear##]}}}},tag=!processed] add replenish_1
+tag @e[type=minecraft:item,nbt={Item:{tag:{display:{Lore:[##knight_spell##]}}}},tag=!processed] add replenish_2
+
+tag @e[type=minecraft:trident,nbt={Trident:{tag:{display:{Lore:[##knight_spear##]}}}},tag=!processed] add replenish_3
+
+
+execute as @e[tag=replenish_0] at @s run tag @a[distance=0..4,nbt={Inventory:[{Slot:0b}]},tag=knight] add replenish_fail
+execute as @e[tag=replenish_1] at @s run tag @a[distance=0..4,nbt={Inventory:[{Slot:2b}]},tag=knight] add replenish_fail
+execute as @e[tag=replenish_2] at @s run tag @a[distance=0..4,nbt={Inventory:[{Slot:1b}]},tag=knight] add replenish_fail
+# Maybe need a bigger radius
+execute as @e[tag=replenish_3] at @s run tag @a[distance=0..4,nbt={Inventory:[{Slot:2b}]},tag=knight] add replenish_fail
+
+
+# Weapon drop protection
+execute as @e[tag=replenish_0,nbt={Item:{tag:{display:{Name:##knight_basic_sword_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:0},tag=!replenish_fail,tag=knight] container.0 with ##knight_basic_sword_item##
+execute as @e[tag=replenish_0,nbt={Item:{tag:{display:{Name:##knight_castironsword_sword_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:0},tag=!replenish_fail,tag=knight] container.0 with ##knight_castironsword_sword_item##
+execute as @e[tag=replenish_0,nbt={Item:{tag:{display:{Name:##knight_sandesitesword_sword_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:0},tag=!replenish_fail,tag=knight] container.0 with ##knight_sandesitesword_sword_item##
+
+
+# Trident drop protection
+execute as @e[tag=replenish_1,nbt={Item:{tag:{display:{Name:##knight_depthsCurse_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:2},tag=!replenish_fail,tag=knight] container.2 with ##knight_depthsCurse_1_item##
+execute as @e[tag=replenish_1,nbt={Item:{tag:{display:{Name:##knight_mobHook_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:2},tag=!replenish_fail,tag=knight] container.2 with ##knight_mobHook_1_item##
+
+
+
+# Ground Pound spell
+execute as @e[tag=replenish_2,nbt={Item:{tag:{display:{Name:##knight_groundPound_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:1},tag=!replenish_fail,tag=knight] container.1 with ##knight_groundPound_1_item##
+# Set up spell success temp var
+scoreboard players set @a[tag=knight] ##t0## 0
+execute as @e[tag=replenish_2,nbt={Item:{tag:{display:{Lore:[##knight_groundPound_spell##]}}}},scores={replenish_ok=1}] run
+    execute at @s run
+    execute at @p[tag=knight,nbt={SelectedItemSlot:1},tag=!replenish_fail,distance=0..4,scores={##mp##=600..}] 
+        store success score @p[tag=knight,nbt={SelectedItemSlot:1},tag=!replenish_fail,distance=0..4,scores={##mp##=600..}]
+            ##t0##
+    run tag @s add cast_pound  
+# Remove mana if successful
+scoreboard players remove @a[tag=knight,scores={##t0##=1}] ##mp## 600
+# Start the lift motion
+execute as @e[tag=cast_pound] at @s
+    run tag @p[distance=0..4,nbt={SelectedItemSlot:1},tag=!replenish_fail,tag=knight] add pound_start
+scoreboard players set @a[tag=pound_start] ##knight_groundPound_riseTime## 6
+effect give @a[tag=pound_start] minecraft:levitation 1 22 true
+tag @a[tag=pound_start] add pound
+tag @a[tag=pound_start] remove pound_start
+scoreboard players set @a[tag=pound] fine_hp.invul 5
+# Decrement lift time
+scoreboard players remove @a[scores={##knight_groundPound_riseTime##=1..}] ##knight_groundPound_riseTime## 1
+effect clear @a[scores={##knight_groundPound_riseTime##=..1}] minecraft:levitation
+# Pound if we hit the ground
+tag @a[tag=pound,nbt={OnGround:1b},scores={##knight_groundPound_riseTime##=0}] add grounded
+tag @a[tag=grounded] remove pound
+execute at @a[tag=grounded] run particle minecraft:explosion_emitter ~ ~ ~
+execute at @a[tag=grounded] run playsound minecraft:block.anvil.place master @a[distance=0..12] ~ ~ ~
+execute at @a[tag=grounded] run tag @e[tag=##enemies##,distance=0..4] add pounded
+execute as @a[tag=grounded] at @s run scoreboard players operation @e[tag=pounded] ##physical_damage## += @s ##knight_groundPound_power##
+tag @a[tag=grounded] remove grounded
+
+execute at @e[tag=pounded] run particle minecraft:block iron_block ~ ~1 ~ 0.25 0.5 0.25 0 100
+execute as @e[tag=pounded] run data modify entity @s Motion[1] set value 0.8
+tag @e[tag=pounded] remove pounded
+
+
+# Shield Spell continuous commands
+scoreboard players set @a[tag=!knight] ##knight_shield_uses## 0
+clear @a[scores={##knight_shield_uses##=0},gamemode=adventure] shield
+
+scoreboard players remove @a[scores={##knight_shield_used##=1..}] ##knight_shield_uses## 1
+execute at @a[scores={##knight_shield_used##=1..}] run effect give @e[distance=0..3,tag=##enemies##] slowness 5
+item replace entity @a[scores={##knight_shield_uses##=8}] weapon.offhand with shield{Damage:1,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=7}] weapon.offhand with shield{Damage:42,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=6}] weapon.offhand with shield{Damage:83,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=5}] weapon.offhand with shield{Damage:124,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=4}] weapon.offhand with shield{Damage:165,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=3}] weapon.offhand with shield{Damage:206,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=2}] weapon.offhand with shield{Damage:247,Enchantments:[{id:unbreaking,lvl:400}]}
+item replace entity @a[scores={##knight_shield_uses##=1}] weapon.offhand with shield{Damage:288,Enchantments:[{id:unbreaking,lvl:400}]}
+scoreboard players set @a ##knight_shield_used## 0
+
+scoreboard players remove @a[scores={##knight_shield_time##=1..}] ##knight_shield_time## 1
+scoreboard players set @a[scores={##knight_shield_uses##=0}] ##knight_shield_time## 0
+scoreboard players set @a[scores={##knight_shield_time##=0}] ##knight_shield_uses## 0
+
+# Shield Spell trigger
+execute as @e[tag=replenish_2,nbt={Item:{tag:{display:{Name:##knight_shield_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:1},tag=!replenish_fail,tag=knight] container.1 with ##knight_shield_1_item##
+# Set up spell success temp var
+scoreboard players set @a[tag=knight] ##t0## 0
+execute as @e[tag=replenish_2,nbt={Item:{tag:{display:{Lore:[##knight_shield_spell##]}}}},scores={replenish_ok=1}] run
+    execute at @s run tag @p[tag=knight,nbt={SelectedItemSlot:1},tag=!replenish_fail,distance=0..4,scores={##mp##=300..}] add cast_shield
+# Remove mana if successful
+scoreboard players remove @a[tag=cast_shield] ##mp## 300
+scoreboard players set @a[tag=cast_shield] ##knight_shield_time## 400
+execute as @a[tag=cast_shield] run scoreboard players operation @s ##knight_shield_uses## = @s ##knight_shield_power##
+
+
+tag @a[tag=cast_shield] remove cast_shield
+
+
+# Trident throwing (TODO)
+# Depth's Curse
+execute as @e[tag=replenish_3,nbt={Trident:{tag:{display:{Name:##knight_depthsCurse_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:2},tag=!replenish_fail,tag=knight] container.2 with ##knight_depthsCurse_1_item##
+    
+scoreboard players set @a[tag=knight] ##t0## 0
+execute as @e[tag=replenish_3,nbt={Trident:{tag:{display:{Lore:[##knight_depthsCurse_spell##]}}}},scores={replenish_ok=1}] run
+    execute at @s run
+    execute at @p[tag=knight,nbt={SelectedItemSlot:2},tag=!replenish_fail,distance=0..4,scores={##mp##=400..}] 
+        store success score @p[tag=knight,nbt={SelectedItemSlot:2},tag=!replenish_fail,distance=0..4,scores={##mp##=400..}]
+            ##t0##
+    run tag @s add depths_curse
+
+tag @e[tag=depths_curse] add thrown_trident
+scoreboard players remove @a[tag=knight,scores={##t0##=1}] ##mp## 400
+execute as @e[tag=knight,scores={##t0##=1}] at @s run 
+    scoreboard players operation @e[tag=depths_curse,sort=nearest,limit=1,tag=!processed] ##knight_depthsCurse_power## = @s ##knight_depthsCurse_power##
+execute as @e[tag=replenish_3,scores={replenish_ok=0},tag=!depths_curse,nbt={Trident:{tag:{display:{Name:##knight_depthsCurse_1_name##}}}}] at @s run
+    summon item ~ ~ ~ {Item:{id:trident,Count:1b,tag:{##knight_depthsCurse_1_nbt##}}}
+
+execute as @e[tag=depths_curse,tag=!processed] run data modify entity @s SoundEvent set value "minecraft:entity.slime.attack"
+execute as @e[tag=depths_curse,tag=!processed] run data modify entity @s damage set value 0
+
+    
+# Mob Hook
+execute as @e[tag=replenish_3,nbt={Trident:{tag:{display:{Name:##knight_mobHook_1_name##}}}}] at @s store success score @s replenish_ok run 
+    item replace entity @p[distance=0..4,nbt={SelectedItemSlot:2},tag=!replenish_fail,tag=knight] container.2 with ##knight_mobHook_1_item##
+    
+scoreboard players set @a[tag=knight] ##t0## 0
+execute as @e[tag=replenish_3,nbt={Trident:{tag:{display:{Lore:[##knight_mobHook_spell##]}}}},scores={replenish_ok=1}] run
+    execute at @s run
+    execute at @p[tag=knight,nbt={SelectedItemSlot:2},tag=!replenish_fail,distance=0..4,scores={##mp##=350..}] 
+        store success score @p[tag=knight,nbt={SelectedItemSlot:2},tag=!replenish_fail,distance=0..4,scores={##mp##=350..}]
+            ##t0##
+    run tag @s add mob_hook
+
+tag @e[tag=mob_hook] add thrown_trident
+
+scoreboard players remove @a[tag=knight,scores={##t0##=1}] ##mp## 350
+execute as @e[tag=knight,scores={##t0##=1}] at @s run 
+    scoreboard players operation @e[tag=mob_hook,sort=nearest,limit=1,tag=!processed] ##knight_mobHook_power## = @s ##knight_mobHook_power##
+execute as @e[tag=replenish_3,scores={replenish_ok=0},tag=!mob_hook,nbt={Trident:{tag:{display:{Name:##knight_mobHook_1_name##}}}}] at @s run
+    summon item ~ ~ ~ {Item:{id:trident,Count:1b,tag:{##knight_mobHook_1_nbt##}}}
+
+execute as @e[tag=mob_hook,tag=!processed] run data modify entity @s SoundEvent set value "minecraft:block.tripwire.detach"
+# TODO do power
+execute as @e[tag=mob_hook,tag=!processed] run data modify entity @s damage set value 2.0
+execute as @e[tag=mob_hook,tag=!processed] at @s store result score @s ##t0## run data get entity @s Motion[0] -100
+execute as @e[tag=mob_hook,tag=!processed] at @s store result score @s ##t1## run data get entity @s Motion[2] -100
+
+    
+kill @e[tag=replenish_3,scores={replenish_ok=1},tag=!thrown_trident]
+
+
+execute as @e[tag=thrown_trident] run data modify entity @s pickup set value 0b
+kill @e[tag=replenish_3,tag=!thrown_trident]
+scoreboard players set @e[tag=thrown_trident] replenish_ok 0
+
+tag @e[tag=thrown_trident,nbt={inGround:1b}] add hit_trident
+tag @e[tag=thrown_trident,nbt={DealtDamage:1b}] add hit_trident
+tag @e[tag=thrown_trident,nbt={DealtDamage:1b}] add hit_mob_trident
+
+
+# Depths curse check loop
+execute at @e[tag=hit_trident,tag=depths_curse] run effect give @e[tag=##enemies##,distance=0..4] minecraft:slowness 10 0 true
+execute as @e[tag=hit_trident,tag=depths_curse] at @s run scoreboard players operation @e[tag=##enemies##,distance=0..4] ##magic_damage## += @s ##knight_depthsCurse_power##
+execute at @e[tag=hit_trident,tag=depths_curse] run particle minecraft:splash ~ ~0.25 ~ 1.5 0.25 1.5 0 200
+execute at @e[tag=hit_trident,tag=depths_curse] run particle minecraft:bubble_pop ~ ~0.25 ~ 1.5 0.25 1.5 0 200
+
+
+# Mob hook check loop
+scoreboard players add @e[tag=mob_hook] ##t2## 1
+execute at @e[tag=hit_mob_trident,tag=mob_hook] run tag @e[tag=##enemies##,distance=0..3] add hooked
+effect give @e[tag=hooked] minecraft:slowness 2 9 true
+effect give @e[tag=hooked] minecraft:jump_boost 2 200 true
+execute at @e[tag=hooked] run particle block iron_block ~ ~1 ~ 0.25 0.5 0.25 0.1 100
+execute as @e[tag=hit_mob_trident,tag=mob_hook] run scoreboard players operation @s ##t0## *= @s ##t2##
+execute as @e[tag=hit_mob_trident,tag=mob_hook] run scoreboard players operation @s ##t1## *= @s ##t2##
+execute as @e[tag=hooked] at @s store result entity @s Motion[0] double 0.001 run
+    scoreboard players get @e[tag=hit_mob_trident,tag=mob_hook,sort=nearest,limit=1] ##t0##
+execute as @e[tag=hooked] at @s store result entity @s Motion[2] double 0.001 run
+    scoreboard players get @e[tag=hit_mob_trident,tag=mob_hook,sort=nearest,limit=1] ##t1##
+execute as @e[tag=hooked] run data modify entity @s Motion[1] set value 0.5
+tag @e[tag=hooked] remove hooked
+
+
+kill @e[tag=hit_trident]
+
+
+tag @e[tag=replenish_0] add processed
+tag @e[tag=replenish_1] add processed
+tag @e[tag=replenish_2] add processed
+tag @e[tag=replenish_3] add processed
+tag @e[tag=replenish_0] remove replenish_0
+tag @e[tag=replenish_1] remove replenish_1
+tag @e[tag=replenish_2] remove replenish_2
+tag @e[tag=replenish_3] remove replenish_3
+tag @a remove replenish_fail
+
+# Apply buffs and such
+scoreboard players set @a[tag=knight] ##knight_groundPound_power## 20
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:0b,tag:{display:{Lore:[##knight_groundPound_boost_1##]}}}]}] ##knight_groundPound_power## 15
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:1b,tag:{display:{Lore:[##knight_groundPound_boost_1##]}}}]}] ##knight_groundPound_power## 15
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:2b,tag:{display:{Lore:[##knight_groundPound_boost_1##]}}}]}] ##knight_groundPound_power## 15
+
+scoreboard players set @a[tag=knight] ##knight_shield_power## 4
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:0b,tag:{display:{Lore:[##knight_shield_boost_1##]}}}]}] ##knight_shield_power## 2
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:1b,tag:{display:{Lore:[##knight_shield_boost_1##]}}}]}] ##knight_shield_power## 2
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:2b,tag:{display:{Lore:[##knight_shield_boost_1##]}}}]}] ##knight_shield_power## 2
+
+scoreboard players set @a[tag=knight] ##knight_depthsCurse_power## 6
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:0b,tag:{display:{Lore:[##knight_depthsCurse_boost_1##]}}}]}] ##knight_depthsCurse_power## 6
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:1b,tag:{display:{Lore:[##knight_depthsCurse_boost_1##]}}}]}] ##knight_depthsCurse_power## 6
+scoreboard players add @a[tag=knight,nbt={Inventory:[{Slot:2b,tag:{display:{Lore:[##knight_depthsCurse_boost_1##]}}}]}] ##knight_depthsCurse_power## 6

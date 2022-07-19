@@ -1,0 +1,10 @@
+summon villager ~ ~ ~ {
+    VillagerData:{
+        profession:cleric,level:2,type:desert
+    },
+    Team:##friendlies##,
+    Invulnerable:1,
+    PersistenceRequired:1,
+    Offers:{
+    },
+    Attributes:[{Name:"generic.movementSpeed",Base:0.0f}],CustomName:'{"text":"Joan (NPC)","color":"white"}',CustomNameVisible:1,Tags:["reset","khorsonah_2","d0"]}

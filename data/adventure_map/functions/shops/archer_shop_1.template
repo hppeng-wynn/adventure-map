@@ -1,0 +1,21 @@
+summon villager -138.5 65 23.5 {
+    VillagerData:{
+        profession:fletcher,level:50,type:plains
+    },
+    Team:##friendlies##,
+    Tags:["shops"],
+    Invulnerable:1,
+    PersistenceRequired:1,
+    Offers:{
+        Recipes:[
+            {
+                buy:{
+                    id:sunflower,Count:18,tag:{##gold_coin_nbt##}	
+				},
+                sell:{
+                    id:bow,Count:1,tag:{##archer_longbow_bow_nbt##}
+                },rewardExp:0b,maxUses:9999999
+            }
+        ]
+    },
+    Attributes:[{Name:"generic.movementSpeed",Base:0.0f}],CustomName:'"Archer Shop"',CustomNameVisible:1}

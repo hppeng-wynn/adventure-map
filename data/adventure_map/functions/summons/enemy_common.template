@@ -1,0 +1,8 @@
+scoreboard players operation @e[tag=unprocessed,sort=nearest,limit=1] ##current_region## = ##globals## ##current_region##
+# fk u paper
+tag @e[tag=unprocessed,sort=nearest,limit=1] add ##enemies##
+team join ##enemies## @e[tag=unprocessed,sort=nearest,limit=1]
+execute store result entity @e[tag=unprocessed,sort=nearest,limit=1] PersistenceRequired byte 1 run scoreboard players get ##globals## ##persistence##
+
+tag @e[tag=unprocessed,sort=nearest,limit=1] add ##tracker##
+tag @e[tag=unprocessed,sort=nearest,limit=1] remove unprocessed

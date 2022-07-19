@@ -1,0 +1,59 @@
+
+# Potion regen
+scoreboard players add @s[scores={##fast_regen_ticks##=1..}] ##health## 1
+scoreboard players remove @s[scores={##fast_regen_ticks##=1..}] ##fast_regen_ticks## 1
+
+# ------------------------------------------
+# Max health boost from armor
+scoreboard players operation @s ##max_health## = @s ##max_health_base##
+scoreboard players add @s[nbt={Inventory:[{Slot:100b,tag:{display:{Lore:[##health_boost_20##]}}}]}] ##max_health## 20
+scoreboard players add @s[nbt={Inventory:[{Slot:101b,tag:{display:{Lore:[##health_boost_20##]}}}]}] ##max_health## 20
+scoreboard players add @s[nbt={Inventory:[{Slot:102b,tag:{display:{Lore:[##health_boost_20##]}}}]}] ##max_health## 20
+scoreboard players add @s[nbt={Inventory:[{Slot:103b,tag:{display:{Lore:[##health_boost_20##]}}}]}] ##max_health## 20
+scoreboard players add @s[nbt={Inventory:[{Slot:100b,tag:{display:{Lore:[##health_boost_5##]}}}]}] ##max_health## 5
+scoreboard players add @s[nbt={Inventory:[{Slot:101b,tag:{display:{Lore:[##health_boost_5##]}}}]}] ##max_health## 5
+scoreboard players add @s[nbt={Inventory:[{Slot:102b,tag:{display:{Lore:[##health_boost_5##]}}}]}] ##max_health## 5
+scoreboard players add @s[nbt={Inventory:[{Slot:103b,tag:{display:{Lore:[##health_boost_5##]}}}]}] ##max_health## 5
+# ------------------------------------------
+
+
+# ------------------------------------------
+# Handle player regen
+# If hunger is above 18, increment
+scoreboard players add @s[scores={##hunger##=18..}] ##regen_tick## 1
+# else set zero
+scoreboard players set @s[scores={##hunger##=..17}] ##regen_tick## 0
+# Check if regen_tick == regen_frequency
+scoreboard players operation @s ##t0## = @s ##regen_tick##
+scoreboard players operation @s ##t0## -= @s ##regen_frequency##
+# If they are equal, regenerate
+execute as @s[scores={##t0##=0..}] run scoreboard players operation @s ##health## += @s ##regen_amount##
+# Cap hp
+scoreboard players operation @s ##health## < @s ##max_health##
+# reset regen_tick as needed
+scoreboard players set @s[scores={##t0##=0..}] ##regen_tick## 0
+# set regen amount to base regen amount
+scoreboard players operation @s ##regen_amount## = @s ##regen_amount_base##
+# ------------------------------------------
+
+
+# Sketchy hack for command damage resetting
+scoreboard players set @s[tag=noWorldDamage] ##player_world_damage## 0
+tag @s remove noWorldDamage
+
+# ------------------------------------------
+# Handle ingame damage sources
+scoreboard players set @s ##t0## 10
+scoreboard players operation @s ##player_world_damage## /= @s ##t0##
+scoreboard players operation @s ##physical_damage## += @s ##player_world_damage##
+scoreboard players set @s ##player_world_damage## 0
+# If the player is dead, set their hp to equal max hp and do some sketchy death reset stuff
+execute as @s[scores={##has_died##=1..}] run scoreboard players operation @s ##health## = @s ##max_health##
+scoreboard players set @s[scores={##has_died##=1..}] ##has_died## 0
+# ------------------------------------------
+
+kill @a[scores={##health_fraction##=..0}]
+
+function adventure_map:fine_damage/player_healthbar_helper
+effect give @s minecraft:resistance 1 4 true
+effect give @s minecraft:wither 1 0 true
